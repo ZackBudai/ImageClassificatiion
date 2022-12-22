@@ -51,24 +51,25 @@ class Net(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-        x = nn.ReLU(x)
+        x = nn.functional.relu(x)
         x = self.conv2(x)
-        x = nn.ReLU(x)
-        x = nn.MaxPool2d(2)(x)
+        x = nn.functional.relu(x)
+        x = nn.functional.max_pool2d(x, 2)
         x = self.dropout1(x)
         x = torch.flatten(x, 1)
         x = self.fc1(x)
-        x = nn.ReLU(x)
+        x = nn.functional.relu(x)
         x = self.dropout2(x)
         x = self.fc2(x)
-        output = nn.LogSoftmax(dim=1)(x)
+        output = nn.functional.log_softmax(x, dim=1)
         return output
 
 # Create the model and move it to the device
 model = Net().to(device)
 
 # Define the loss function and the optimizer
-criterion = nn
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters())
 
 # Train the model
 n_epochs = 10
@@ -81,7 +82,8 @@ for epoch in range(n_epochs):
         # Zero the gradients
         optimizer.zero_grad()
 
-        # Forward pass
+
+# Forward pass
         outputs = model(images)
         loss = criterion(outputs, labels)
 
